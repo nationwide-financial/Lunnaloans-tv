@@ -9,34 +9,34 @@ import moment from 'moment';
 import useFetchData from '../hooks/useFetchData';
 
 interface EnrollmentData {
-    enrolled_date: string;
-    total_enrollments: number;
-    debt_enrolled: number;
+    enrolled_date: any;
+    total_enrollments: any;
+    debt_enrolled: any;
 }
 
 interface TableRowData {
-    reservationcode: string;
-    contact_firstname: string;
-    contact_lastname: string;
-    loan_amount: number;
-    application_createtime: string;
-    first_payment_date: string;
-    payment_frequency: string;
+    reservationcode: any;
+    contact_firstname: any;
+    contact_lastname: any;
+    loan_amount: any;
+    application_createtime: any;
+    first_payment_date: any;
+    payment_frequency: any;
     data:any;
     numberOfPages:any;
 }
 
 interface Enrollment {
-    monthToDateWonCount: number;
-    monthToDateWonSum: number;
-    yearlyData: EnrollmentData[];
+    monthToDateWonCount: any;
+    monthToDateWonSum: any;
+    yearlyData: any[];
     monthlyData:any
 }
 
 const Home: React.FC = () => {
     const [value, setValue] = React.useState('1');
-    const [limit, setLimit] = useState<number>(5);
-    const [page, setPage] = useState<number>(1);
+    const [limit, setLimit] = useState<any>(5);
+    const [page, setPage] = useState<any>(1);
 
     const { 
         data: enrollmentData, 
