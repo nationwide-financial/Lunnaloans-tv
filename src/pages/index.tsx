@@ -59,7 +59,7 @@ const Home: React.FC = () => {
         loading: loadingTableDataMtd, 
        // error: tableDataErrorMtd 
     } = useFetchData<TableRowData>({
-        url: `http://localhost:5001/api/enrollments/mtd/${limit}/${page}`,
+        url: `https://7fwwglseys3xlqk6hogiazspv40gzoug.lambda-url.us-east-1.on.aws/api/enrollments/mtd/${limit}/${page}`,
     });
 
     console.log("tableDatatableDatatableDatatableData",tableDataResponse)
