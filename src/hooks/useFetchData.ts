@@ -25,14 +25,13 @@ const useFetchData = <T>({ url, headers = {}, method = "GET", body, params }: Us
       setLoading(true);
       setError(null);
       try {
-        const response = await axios({
+        const response = await axios<T>({ // Explicitly specify <T> for axios
           method,
           url,
           headers,
           data: body,
           params,
         });
-        console.log("responseresponseresponseresponse",response)
         setData(response.data);
       } catch (err: any) {
         setError(err?.message || "An error occurred while fetching data.");
