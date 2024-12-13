@@ -29,24 +29,39 @@ interface TableRowData {
 interface Enrollment {
     monthToDateWonCount: number;
     monthToDateWonSum: number;
-    monthlyData: EnrollmentData[];
+    yearlyData: EnrollmentData[];
+    monthlyData:any
 }
 
 const Home: React.FC = () => {
     const [value, setValue] = React.useState('1');
     const [limit, setLimit] = useState<number>(5);
     const [page, setPage] = useState<number>(1);
-    const [count, setCount] = useState<number>(0);
-    const [tableData, setTableData] = useState<any>();
-    const [enrollment, setEnrollment] = useState<Enrollment | null>(null);
 
-    const { data: enrollmentData, loading: loadingEnrollment, error: enrollmentError } = useFetchData<Enrollment>({
+    const { 
+        data: enrollmentData, 
+       // loading: loadingEnrollment, 
+       // error: enrollmentError 
+    } = useFetchData<Enrollment>({
         url: "http://localhost:5001/api/enrollments",
     });
 
-    const { data: tableDataResponse, loading: loadingTableData, error: tableDataError } = useFetchData<TableRowData>({
+    const { 
+        data: tableDataResponse, 
+       // loading: loadingTableData, 
+       // error: tableDataError 
+    } = useFetchData<TableRowData>({
         url: `http://localhost:5001/api/enrollments/${limit}/${page}`,
     });
+
+    const { 
+        data: tableDataResponseMtd, 
+        loading: loadingTableDataMtd, 
+       // error: tableDataErrorMtd 
+    } = useFetchData<TableRowData>({
+        url: `http://localhost:5001/api/enrollments/mtd/${limit}/${page}`,
+    });
+
     console.log("tableDatatableDatatableDatatableData",tableDataResponse)
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
         setValue(newValue);
@@ -61,51 +76,43 @@ const Home: React.FC = () => {
         setPage(1);
     };
 
-    useEffect(() => {
-        if (enrollmentData) {
-            setEnrollment(enrollmentData);
-        }
-        if (Array.isArray(tableDataResponse)) {
-            setTableData(tableDataResponse);
-        } else {
-            setTableData({}); // Ensure it's an array
-        }
-    }, [enrollmentData, tableDataResponse]);
-
     return (
-        <Box sx={{ padding: '30px', textAlign: 'center', background: 'linear-gradient(to right, rgba(0, 100, 255, 0.8), rgba(135, 206, 250, 0.8))' }}>
+        <Box sx={{ padding: '30px', }}>
             <Box sx={{ width: '100%', typography: 'body1' }}>
                 <TabContext value={value}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <TabList onChange={handleChange} aria-label="lab API tabs example">
-                            <Tab label="YTD Enrollments" value="1" sx={{ color: '#fff' }} />
-                            <Tab label="MTD Enrollments" value="2" sx={{ color: '#fff' }} />
+                            <Tab label="Lunna Loans Enrollments" value="1" />
+                            <Tab label="Individual enrollment" value="2" />
                         </TabList>
                     </Box>
-                    <TabPanel value="1">
-                        <Box pt={5} pl={2} sx={{ backgroundColor: 'rgba(173, 216, 230, 0.5)', borderRadius: '10px' }}>
+                    <TabPanel value="1" sx={{backgroundColor:'#e5e7eb'}}>
+                        <Box  sx={{  borderRadius: '10px' }}>
+                        <Typography variant="h5" sx={{ fontWeight: 600 }}>YTD Enrollments</Typography>
+
                             <Grid container>
+
                                 <Grid item xs={12} md={6} sx={{ padding: '20px' }}>
-                                    <Typography variant="h4" sx={{ color: '#fff', fontWeight: 600 }}>YTD Enrollments</Typography>
-                                    {loadingEnrollment && <CircularProgress sx={{ width: 30, height: 30, marginLeft: 10 }} />}
-                                    <Box sx={{ marginTop: '30px' }}>
-                                        <MainCard title="YTD Enrollments" count={String(enrollment?.monthToDateWonCount || 0)} />
-                                        <MainCard title="Enrolled Debt" count={(enrollment?.monthToDateWonSum || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} />
-                                    </Box>
+                                 
+                                        <MainCard title="YTD Enrollments" count={String(enrollmentData?.monthToDateWonCount || 0)} />
+                                  
                                 </Grid>
                                 <Grid item xs={12} md={6} sx={{ padding: '20px' }}>
-                                    <TableContainer sx={{ marginTop: '50px' }}>
+                                <MainCard title="Enrolled Debt" count={(enrollmentData?.monthToDateWonSum || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} />
+
+                                </Grid>
+                                <TableContainer sx={{ margin: '20px' }}>
                                         <Table sx={{ minWidth: 500, backgroundColor: '#fff', borderRadius: '10px' }} aria-label="custom pagination table">
                                             <TableHead>
                                                 <TableRow>
-                                                    <TableCell align="left" sx={{ fontSize: 18, color: '#333', fontWeight: 800 }}>Enrolled Date</TableCell>
-                                                    <TableCell align="left" sx={{ fontSize: 18, color: '#333', fontWeight: 800 }}>Total Enrollments</TableCell>
-                                                    <TableCell align="left" sx={{ fontSize: 18, color: '#333', fontWeight: 800 }}>Debt Enrollments</TableCell>
+                                                    <TableCell align="left" sx={{ fontSize: 18, color: 'gray', fontWeight: 700 }}>Enrolled Date</TableCell>
+                                                    <TableCell align="left" sx={{ fontSize: 18, color: 'gray', fontWeight: 700 }}>Total Enrollments</TableCell>
+                                                    <TableCell align="left" sx={{ fontSize: 18, color: 'gray', fontWeight: 700 }}>Debt Enrollments</TableCell>
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
-                                                {enrollment?.monthlyData?.map((row, key) => (
-                                                    <TableRow key={key} sx={{ '&:nth-of-type(even)': { backgroundColor: 'rgba(173, 216, 230, 0.2)' } }}>
+                                                {enrollmentData?.yearlyData?.map((row, key) => (
+                                                    <TableRow key={key} >
                                                         <TableCell align="left">{row?.enrolled_date}</TableCell>
                                                         <TableCell align="left">{row?.total_enrollments}</TableCell>
                                                         <TableCell align="left">{row?.debt_enrolled}</TableCell>
@@ -114,27 +121,30 @@ const Home: React.FC = () => {
                                             </TableBody>
                                         </Table>
                                     </TableContainer>
-                                </Grid>
                             </Grid>
                         </Box>
+                        
+                    </TabPanel>
+                    <TabPanel value="2" sx={{backgroundColor:'#e5e7eb'}}>
+                   
                         <TableContainer sx={{ marginTop: '50px' }}>
                             <Table sx={{ minWidth: 500, backgroundColor: '#fff', borderRadius: '10px' }} aria-label="custom pagination table">
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell align="left" sx={{ fontSize: 18, color: '#333', fontWeight: 800 }}>ID</TableCell>
-                                        <TableCell align="left" sx={{ fontSize: 18, color: '#333', fontWeight: 800 }}>CLIENT NAME</TableCell>
-                                        <TableCell align="left" sx={{ fontSize: 18, color: '#333', fontWeight: 800 }}>Enrolled Debt</TableCell>
-                                        <TableCell align="left" sx={{ fontSize: 18, color: '#333', fontWeight: 800 }}>Enrolled Date</TableCell>
-                                        <TableCell align="left" sx={{ fontSize: 18, color: '#333', fontWeight: 800 }}>1st Payment Date</TableCell>
-                                        <TableCell align="left" sx={{ fontSize: 18, color: '#333', fontWeight: 800 }}>1st Payment Status</TableCell>
+                                        <TableCell align="left" sx={{ fontSize: 16, color: 'gray', fontWeight: 700 }}>ID</TableCell>
+                                        <TableCell align="left" sx={{ fontSize: 16, color: 'gray', fontWeight: 700 }}>CLIENT NAME</TableCell>
+                                        <TableCell align="left" sx={{ fontSize: 16, color: 'gray', fontWeight: 700 }}>Enrolled Debt</TableCell>
+                                        <TableCell align="left" sx={{ fontSize: 16, color: 'gray', fontWeight: 700 }}>Enrolled Date</TableCell>
+                                        <TableCell align="left" sx={{ fontSize: 16, color: 'gray', fontWeight: 700 }}>1st Payment Date</TableCell>
+                                        <TableCell align="left" sx={{ fontSize: 16, color: 'gray', fontWeight: 700 }}>1st Payment Status</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {loadingTableData ? (
+                                    {loadingTableDataMtd ? (
                                         <CircularProgress sx={{ width: 30, height: 30, marginLeft: 10 }} />
                                     ) : (
-                                        tableDataResponse?.data?.map((row:any, key:any) => (
-                                            <TableRow key={key} sx={{ '&:nth-of-type(even)': { backgroundColor: 'rgba(173, 216, 230, 0.2)' } }}>
+                                        tableDataResponseMtd?.data?.map((row:any, key:any) => (
+                                            <TableRow key={key} >
                                                 <TableCell align="left">{row?.reservationcode}</TableCell>
                                                 <TableCell align="left">{row?.contact_firstname} {row?.contact_lastname}</TableCell>
                                                 <TableCell align="left">{row?.loan_amount}</TableCell>
@@ -158,7 +168,7 @@ const Home: React.FC = () => {
                             />
                         </TableContainer>
                     </TabPanel>
-                    <TabPanel value="2">Item Two</TabPanel>
+                    
                 </TabContext>
             </Box>
         </Box>
