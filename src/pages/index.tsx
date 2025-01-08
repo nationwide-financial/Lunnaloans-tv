@@ -44,7 +44,7 @@ const Home: React.FC = () => {
         // loading: loadingEnrollment, 
         // error: enrollmentError 
     } = useFetchData<Enrollment>({
-        url: "http://localhost:5001/api/enrollments",
+        url: "https://7fwwglseys3xlqk6hogiazspv40gzoug.lambda-url.us-east-1.on.aws/api/enrollments",
     });
 
     const {
@@ -52,7 +52,7 @@ const Home: React.FC = () => {
         // loading: loadingTableData, 
         // error: tableDataError 
     } = useFetchData<TableRowData>({
-        url: `http://localhost:5001/api/enrollments/${limit}/${page}`,
+        url: `https://7fwwglseys3xlqk6hogiazspv40gzoug.lambda-url.us-east-1.on.aws/api/enrollments/${limit}/${page}`,
     });
 
     const {
@@ -60,10 +60,9 @@ const Home: React.FC = () => {
         loading: loadingTableDataMtd,
         // error: tableDataErrorMtd 
     } = useFetchData<TableRowData>({
-        url: `http://localhost:5001/api/enrollments/mtd/${limit}/${page}`,
+        url: `https://7fwwglseys3xlqk6hogiazspv40gzoug.lambda-url.us-east-1.on.aws/api/enrollments/mtd/${limit}/${page}`,
     });
 
-    console.log("tableDatatableDatatableDatatableData", tableDataResponse)
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
         setValue(newValue);
     };
