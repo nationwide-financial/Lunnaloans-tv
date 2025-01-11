@@ -35,19 +35,15 @@ const Home: React.FC = () => {
     const [page, setPage] = useState<any>(1);
 
     const {
-        data: enrollmentData,
-        // loading: loadingEnrollment, 
-        // error: enrollmentError 
+        data: enrollmentData
     } = useFetchData<Enrollment>({
-        url: "http://localhost:5001/api/enrollments",
+        url: "https://7fwwglseys3xlqk6hogiazspv40gzoug.lambda-url.us-east-1.on.aws/api/enrollments",
     });
 
     const {
-        data: tableDataResponseMtd,
-        loading: loadingTableDataMtd,
-        // error: tableDataErrorMtd 
+        data: tableDataResponseMtd
     } = useFetchData<TableRowData>({
-        url: `http://localhost:5001/api/enrollments/mtd/${limit}/${page}`,
+        url: `https://7fwwglseys3xlqk6hogiazspv40gzoug.lambda-url.us-east-1.on.aws/api/enrollments/mtd/${limit}/${page}`,
     });
 
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
