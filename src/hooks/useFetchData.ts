@@ -7,6 +7,7 @@ interface UseFetchDataProps<T> {
   method?: "GET" | "POST" | "PUT" | "DELETE";
   body?: any;
   params?: Record<string, string | number>;
+  interval?: number; // Optional interval in milliseconds
 }
 
 interface UseFetchDataReturn<T> {
@@ -15,33 +16,56 @@ interface UseFetchDataReturn<T> {
   error: string | null;
 }
 
-const useFetchData = <T>({ url, headers = {}, method = "GET", body, params }: UseFetchDataProps<T>): UseFetchDataReturn<T> => {
+const useFetchData = <T>({
+  url,
+  headers = {},
+  method = "GET",
+  body,
+  params,
+  interval = 60000, // Default to 1 minute
+}: UseFetchDataProps<T>): UseFetchDataReturn<T> => {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let isMounted = true; // Track component mounted state
     const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const response = await axios<T>({ // Explicitly specify <T> for axios
+        const response = await axios<T>({
           method,
           url,
           headers,
           data: body,
           params,
         });
-        setData(response.data);
+        if (isMounted) {
+          setData(response.data);
+        }
       } catch (err: any) {
-        setError(err?.message || "An error occurred while fetching data.");
+        if (isMounted) {
+          setError(err?.message || "An error occurred while fetching data.");
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchData();
-  }, [url, method, body, params]);
+
+    // Set up polling
+    const intervalId = setInterval(fetchData, interval);
+
+    // Cleanup function
+    return () => {
+      isMounted = false; // Mark component as unmounted
+      clearInterval(intervalId); // Clear interval
+    };
+  }, [url, method, body, params, interval]); // Dependencies include interval and other props
 
   return { data, loading, error };
 };
