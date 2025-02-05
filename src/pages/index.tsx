@@ -93,8 +93,8 @@ const Home: React.FC = () => {
                             </Typography>
                           </Box>
                         </TableCell>
-                        <TableCell align="left">{row.assigned_application_count.toLocaleString()}</TableCell>
-                        <TableCell align="left">${row.loan_amount.toLocaleString()}</TableCell>
+                        <TableCell align="left">{row.assigned_application_count?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell>
+                        <TableCell align="left">${row.loan_amount?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
